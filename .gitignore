@@ -11,3 +11,4 @@ Session.vim
 build/
 rtconfig.pyc
 .sconsign.dblite
+.config.old
