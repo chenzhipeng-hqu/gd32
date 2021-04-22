@@ -1,0 +1,4 @@
+   text	   data	    bss	    dec	    hex	filename
+ 508972	   3400	   3796	 516168	  7e048	/home/chenzhipeng3472/codes/gd32/codes/gd32450z-eval/build/rtthread.elf
+BuildTime:2021-04-22 11:12:02.645742
+-------------------------------------------------------

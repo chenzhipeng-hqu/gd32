@@ -1,0 +1,185 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [   
+        {
+           "name": "Cortex Debug2",
+           "cwd": "${workspaceRoot}",  // 输出路径
+           "executable": "./build/rtthread.elf",    // 要调试的程序
+           "request": "launch",
+           "type": "cortex-debug",
+           "servertype": "openocd",    // 调试器选择
+           "device": "GD32F450ZK",    // 使用J-link GDB Server时必须；其他GBD Server时可选（有可能帮助自动选择 SVD文件）。支持的设备见 https://www.segger.com/downloads/supported-devices.php
+           //"svdFile": "./STM32L15xC.svd",  // svd文件，有这个文件才能查看寄存器的值，每个单片机都不同。可以在以下地址找到 https://github.com/posborne/cmsis-svd下载
+           "interface": "swd",
+           "configFiles": [
+               //"${workspaceRoot}/openocd.cfg", // *可以通过加载该文件来配置
+                "/usr/share/openocd/scripts/interface/st-link-v2.cfg",
+                "/usr/share/openocd/scripts/target/stm32f4x.cfg",
+           ],
+           "runToMain": true,
+//            "preLaunchTask": "build",   // 在调试前预先执行的任务，此处是tasks.json中的
+           //"armToolchainPath": "C:\\Program Files (x86)\\GNU Tools ARM Embedded\\5.4 2016q3\\bin"    // 如果没有把 arm工具链路径添加到系统环境变量，则需要这条指令添加你的路径
+       },
+        {
+            "name": "blink Launch",
+            "type": "cppdbg",
+            "request": "launch",
+            "targetArchitecture": "arm",//虽然官方说弃用了，但实际上必须指明
+            "program": "blink", // 采用了自定义的设置，这里没啥用了
+            "args": [""],
+            "stopAtEntry": true,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": true,
+            "MIMode": "gdb",
+            "miDebuggerPath": "/opt/st/stm32cubeide_1.1.0/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-arm-embedded.7-2018-q2-update.linux64_1.0.0.201904120901/tools/bin",
+            
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "launchCompleteCommand": "None",
+            "miDebuggerServerAddress": "localhost:3333",
+            "customLaunchSetupCommands": [
+                {
+                    "text": "target remote :3333",
+                    "description": "connect to server",
+                    "ignoreFailures": false
+                },
+                {
+                    "text": "file ${workspaceFolder}/build/rtthread.elf",
+                    "description": "load file to gdb",
+                    "ignoreFailures": false
+                },
+                {
+                    "text": "load",
+                    "description": "download file to MCU",
+                    "ignoreFailures": false
+                },
+                {
+                    "text": "monitor reset",
+                    "description": "reset MCU",
+                    "ignoreFailures": false
+                },
+                {
+                    "text": "b main",
+                    "description": "set breakpoints at main",
+                    "ignoreFailures": false
+                },
+            ]
+        },
+        {
+            "name": "st-link-v2",
+            "cwd": "${workspaceRoot}",
+            "executable": "./build/rtthread.elf",
+            "request": "launch",
+            "type": "cortex-debug",
+            "servertype": "openocd",
+            "device": "GD32F450ZK",
+            "configFiles": [
+                "/usr/share/openocd/scripts/interface/stlink-v2.cfg",
+                "/usr/share/openocd/scripts/target/stm32f4x.cfg",
+            ],
+            "armToolchainPath": "/opt/st/stm32cubeide_1.1.0/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-arm-embedded.7-2018-q2-update.linux64_1.0.0.201904120901/tools/bin",
+            // "svdFile": "STM32F427x.svd",
+            "svdFile": "./drivers/STM32F429.svd",
+            "runToMain": true,           
+            "preLaunchTask": "build"
+        },
+        {
+            "name": "cmsis-dap",
+            "cwd": "${workspaceRoot}",
+            "executable": "./build/rtthread.elf",
+            "request": "launch",
+            "type": "cortex-debug",
+            "servertype": "openocd",
+            "device": "GD32F450ZK",
+            "configFiles": [
+                "/usr/share/openocd/scripts/interface/cmsis-dap.cfg",
+                "/usr/share/openocd/scripts/target/stm32f4x.cfg",
+            ],
+            "armToolchainPath": "/opt/st/stm32cubeide_1.1.0/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-arm-embedded.7-2018-q2-update.linux64_1.0.0.201904120901/tools/bin",
+            // "svdFile": "STM32F427x.svd",
+            "svdFile": "./drivers/STM32F429.svd",
+            
+            "preLaunchTask": "build"
+        },
+        {
+            "name": "ARM Debug",
+            "type": "cppdbg",
+            "request": "launch",
+            "miDebuggerPath": "/opt/st/stm32cubeide_1.1.0/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-arm-embedded.7-2018-q2-update.linux64_1.0.0.201904120901/tools/bin/arm-none-eabi-gdb",//调试工具原始路径
+            "targetArchitecture": "arm",
+            "program": "${workspaceFolder}/build/rtthread.elf", // 要调试的程序（在下面的参数中指定了，这里的没有意义）
+            "setupCommands": [
+                {
+                    "text": "file '${workspaceFolder}/build/rtthread.elf'"
+                },
+                {
+                    "text": "target remote localhost:3333"
+                },
+                {
+                    "text": "monitor reset"
+                },
+                {
+                    "text": "monitor halt"
+                },
+                {
+                    "text": "load"
+                }
+            ],
+            "preLaunchTask": "openocd_debug",
+            "launchCompleteCommand": "None",
+            "externalConsole": true,
+            "cwd": "${workspaceRoot}"
+        },
+        {
+            "name": "(gdb) 启动",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/rtthread.elf", // 要调试的程序（在下面的参数中指定了，这里的没有意义）
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,  // 调试时是否显示控制台窗口
+            "MIMode": "gdb",
+            "miDebuggerPath": "/opt/st/stm32cubeide_1.1.0/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-arm-embedded.7-2018-q2-update.linux64_1.0.0.201904120901/tools/bin/arm-none-eabi-gdb",//调试工具原始路径
+            "targetArchitecture": "arm", //目标架构，此参数必须要有
+            "setupCommands": [
+                {
+                    "description": "选择调试文件(.elf)到gdb",
+                    "text": "file ${workspaceFolder}/rtthread.elf",
+                    "ignoreFailures": false
+                },
+                {
+                    "description": "连接GDB Server",
+                    "text": "target remote localhost:3333",                                 
+                    "ignoreFailures": false
+                },
+                {
+                    "description": "Reset MCU",
+                    "text": "monitor reset",                                              
+                    "ignoreFailures": false
+                },
+                {
+                    "description": "Halt",
+                    "text": "monitor halt",                                                  
+                    "ignoreFailures": false
+                },
+                {
+                    "description":"下载代码到MCU",
+                    "text": "load" ,              
+                    "ignoreFailures": false                                      
+                }
+            ]
+            // ,"preLaunchTask": "openocd_debug", // 在调试前预先执行的任务，此处是tasks.json中的
+        }
+    ]
+}

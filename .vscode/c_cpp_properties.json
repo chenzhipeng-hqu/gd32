@@ -1,0 +1,48 @@
+{
+    "configurations": [
+        {
+            "intelliSenseMode": "clang-x64",
+            "name": "Win32",
+            "cppStandard": "c++11",
+            "cStandard": "c99",
+            "compilerPath": "/opt/st/stm32cubeide_1.1.0/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update.linux64_1.0.0.201904181610/tools/bin/arm-none-eabi-gcc",
+            "includePath": [
+                "Libraries/CMSIS",
+                "Libraries/CMSIS/GD/GD32F4xx/Include",
+                "Libraries/GD32F4xx_standard_peripheral/Include",
+                "applications",
+                "drivers",
+                "rt-thread/components/dfs/filesystems/devfs",
+                "rt-thread/components/dfs/filesystems/elmfat",
+                "rt-thread/components/dfs/include",
+                "rt-thread/components/drivers/include",
+                "rt-thread/components/finsh",
+                "rt-thread/components/libc/compilers/common",
+                "rt-thread/components/libc/compilers/newlib",
+                "rt-thread/components/net/lwip-2.0.2/src",
+                "rt-thread/components/net/lwip-2.0.2/src/arch/include",
+                "rt-thread/components/net/lwip-2.0.2/src/include",
+                "rt-thread/components/net/lwip-2.0.2/src/include/ipv4",
+                "rt-thread/components/net/lwip-2.0.2/src/include/netif",
+                "rt-thread/components/net/netdev/include",
+                "rt-thread/components/net/sal_socket/impl",
+                "rt-thread/components/net/sal_socket/include",
+                "rt-thread/components/net/sal_socket/include/dfs_net",
+                "rt-thread/components/net/sal_socket/include/socket",
+                "rt-thread/components/net/sal_socket/include/socket/sys_socket",
+                "rt-thread/include",
+                "rt-thread/libcpu/arm/common",
+                "rt-thread/libcpu/arm/cortex-m4",
+                "${workspaceFolder}"
+            ],
+            "defines": [
+                "GD32F4XX",
+                "HAVE_CCONFIG_H",
+                "RT_USING_NEWLIB",
+                "USE_STDPERIPH_DRIVER",
+                "__RTTHREAD__"
+            ]
+        }
+    ],
+    "version": 4
+}
