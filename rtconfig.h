@@ -190,9 +190,16 @@
 
 /* peripheral libraries and drivers */
 
+#define PKG_USING_SIGNAL_LED
+#define PKG_USING_SIGNAL_LED_LATEST_VERSION
+
+/* signalLed Options */
+
 
 /* miscellaneous packages */
 
+#define PKG_USING_FLEXIBLE_BUTTON
+#define PKG_USING_FLEXIBLE_BUTTON_LATEST
 
 /* samples: kernel and components samples */
 

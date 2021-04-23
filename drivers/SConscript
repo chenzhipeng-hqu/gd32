@@ -37,6 +37,20 @@ if GetDepend('RT_USING_SFUD'):
 elif GetDepend('RT_USING_SPI'):
     src += ['drv_spi.c']
 
+# add FlexibleButton port.
+if GetDepend('PKG_USING_FLEXIBLE_BUTTON'):
+    src += ['ports/FlexibleButton/FlexibleButton_port.c']
+
+# add Multibutton port.
+if GetDepend('PKG_USING_MULTIBUTTON'):
+    src += ['ports/MultiButton/MultiButton_port.c']
+
+# add SignalLed port.
+if GetDepend('PKG_USING_SIGNAL_LED'):
+    src += ['ports/SignalLed/SignalLed_port.c']
+
+src += ['touch_panel.c']
+
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)
 
 Return('group')

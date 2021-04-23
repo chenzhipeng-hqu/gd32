@@ -27,8 +27,9 @@
 #define LCD_480_320_HSYNC              ((uint32_t)10)      /* Horizontal synchronization */
 #define LCD_480_320_HBP                ((uint32_t)20)     /* Horizontal back porch      */
 #define LCD_480_320_HFP                ((uint32_t)40)      /* Horizontal front porch     */
+
 #define LCD_480_320_VSYNC              ((uint32_t)2)       /* Vertical synchronization   */
-#define LCD_480_320_VBP                ((uint32_t)1)      /* Vertical back porch        */
+#define LCD_480_320_VBP                ((uint32_t)2)      /* Vertical back porch        */
 #define LCD_480_320_VFP                ((uint32_t)4)      /* Vertical front porch       */
 
 #define LCD_BITS_PER_PIXEL             16
@@ -164,14 +165,14 @@ static void tli_config(void)
     tli_init_struct.signalpolarity_pixelck = TLI_PIXEL_CLOCK_TLI;
     
     /* LCD display timing configuration */
-    tli_init_struct.synpsz_hpsz   = LCD_480_320_HSYNC;
-    tli_init_struct.synpsz_vpsz   = LCD_480_320_VSYNC;
-    tli_init_struct.backpsz_hbpsz = LCD_480_320_HSYNC + LCD_480_320_HBP; 
-    tli_init_struct.backpsz_vbpsz = LCD_480_320_VSYNC + LCD_480_320_VBP;  
-    tli_init_struct.activesz_hasz = RT_HW_LCD_WIDTH + LCD_480_320_HSYNC + LCD_480_320_HBP;
-    tli_init_struct.activesz_vasz = RT_HW_LCD_HEIGHT + LCD_480_320_VSYNC + LCD_480_320_VBP;
-    tli_init_struct.totalsz_htsz  = RT_HW_LCD_WIDTH + LCD_480_320_HSYNC + LCD_480_320_HBP + LCD_480_320_HFP; 
-    tli_init_struct.totalsz_vtsz  = RT_HW_LCD_HEIGHT + LCD_480_320_VSYNC + LCD_480_320_VBP + LCD_480_320_VFP;
+    tli_init_struct.synpsz_hpsz   = LCD_480_320_HSYNC - 1;
+    tli_init_struct.synpsz_vpsz   = LCD_480_320_VSYNC - 1;
+    tli_init_struct.backpsz_hbpsz = LCD_480_320_HSYNC + LCD_480_320_HBP - 1;
+    tli_init_struct.backpsz_vbpsz = LCD_480_320_VSYNC + LCD_480_320_VBP - 1;
+    tli_init_struct.activesz_hasz = RT_HW_LCD_WIDTH + LCD_480_320_HSYNC + LCD_480_320_HBP - 1;
+    tli_init_struct.activesz_vasz = RT_HW_LCD_HEIGHT + LCD_480_320_VSYNC + LCD_480_320_VBP - 1;
+    tli_init_struct.totalsz_htsz  = RT_HW_LCD_WIDTH + LCD_480_320_HSYNC + LCD_480_320_HBP + LCD_480_320_HFP - 1;
+    tli_init_struct.totalsz_vtsz  = RT_HW_LCD_HEIGHT + LCD_480_320_VSYNC + LCD_480_320_VBP + LCD_480_320_VFP - 1;
     
     /* LCD background color configure*/
     tli_init_struct.backcolor_red   = 0x00;
@@ -182,6 +183,27 @@ static void tli_config(void)
     lcd_framebuffer = rt_malloc(sizeof(rt_uint16_t) * RT_HW_LCD_HEIGHT * RT_HW_LCD_WIDTH);
     RT_ASSERT(lcd_framebuffer != NULL);
     rt_memset(lcd_framebuffer, 0, sizeof(rt_uint16_t) * RT_HW_LCD_WIDTH * RT_HW_LCD_HEIGHT);
+
+    /* TLI layer1 configuration */
+    tli_layer_init_struct.layer_window_leftpos          = tli_init_struct.backpsz_hbpsz + 1;
+    tli_layer_init_struct.layer_window_rightpos         = tli_init_struct.backpsz_hbpsz + RT_HW_LCD_WIDTH; 
+    tli_layer_init_struct.layer_window_toppos           = tli_init_struct.backpsz_vbpsz + 1;
+    tli_layer_init_struct.layer_window_bottompos        = tli_init_struct.backpsz_vbpsz + RT_HW_LCD_HEIGHT;
+    
+    tli_layer_init_struct.layer_ppf                     = LAYER_PPF_RGB565;
+    tli_layer_init_struct.layer_sa                      = 0xFF;
+    tli_layer_init_struct.layer_default_blue            = 0x00;        
+    tli_layer_init_struct.layer_default_green           = 0x00;       
+    tli_layer_init_struct.layer_default_red             = 0x00;         
+    tli_layer_init_struct.layer_default_alpha           = 0x00;
+    tli_layer_init_struct.layer_acf1                    = LAYER_ACF1_PASA;    
+    tli_layer_init_struct.layer_acf2                    = LAYER_ACF2_PASA;
+    tli_layer_init_struct.layer_frame_bufaddr           = (uint32_t)lcd_framebuffer;    
+    tli_layer_init_struct.layer_frame_line_length       = ((RT_HW_LCD_WIDTH * 2) + 3); 
+    tli_layer_init_struct.layer_frame_buf_stride_offset = (RT_HW_LCD_WIDTH * 2);
+    tli_layer_init_struct.layer_frame_total_line_number = RT_HW_LCD_HEIGHT; 
+    
+    tli_layer_init(LAYER1, &tli_layer_init_struct);
 
     /* TLI layer0 configuration */
     tli_layer_init_struct.layer_window_leftpos          = tli_init_struct.backpsz_hbpsz + 1;
@@ -240,7 +262,9 @@ int gd32_hw_lcd_init(void)
     
     lcd_config();
     tli_config();
+    tli_dither_config(TLI_DITHER_ENABLE);
     tli_layer_enable(LAYER0);  
+    tli_layer_enable(LAYER1);  
     tli_reload_config(TLI_FRAME_BLANK_RELOAD_EN);
     tli_enable();
     
